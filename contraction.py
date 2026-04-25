@@ -65,8 +65,9 @@ def contract(belief_base, formula):
     for r in selected[1:]:
         intersection &= set(r)
 
-    priority_map = {f: p for f, p in belief_base.get_sorted()}
+# Preserve original insertion order for entrenched beliefs
     new_bb = BeliefBase()
-    for f in intersection:
-        new_bb.add(f, priority_map.get(f, 1))
+    for f in belief_base.get_formulas():
+        if f in intersection:
+            new_bb.add(f)
     return new_bb
