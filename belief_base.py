@@ -4,27 +4,27 @@
 
 class BeliefBase:
     def __init__(self):
-        self.beliefs = []  # list of (formula, priority)
+        # Ordered list of formulas — index 0 = most entrenched (added first)
+        self.beliefs = []
 
-    def add(self, formula, priority=1):
-        # Remove if already exists, then add with new priority
-        self.beliefs = [(f, p) for f, p in self.beliefs if f != formula]
-        self.beliefs.append((formula, priority))
+    def add(self, formula):
+        if formula not in self.beliefs:
+            self.beliefs.append(formula)  # newest = least entrenched
 
     def remove(self, formula):
-        self.beliefs = [(f, p) for f, p in self.beliefs if f != formula]
+        self.beliefs = [f for f in self.beliefs if f != formula]
 
     def get_formulas(self):
-        return [f for f, p in self.beliefs]
+        return list(self.beliefs)
 
     def get_sorted(self):
-        return sorted(self.beliefs, key=lambda x: x[1], reverse=True)
+        # Returns (formula, entrenchment) where lower index = more entrenched
+        return [(f, len(self.beliefs) - i) for i, f in enumerate(self.beliefs)]
 
     def __str__(self):
-        sorted_beliefs = self.get_sorted()
-        if not sorted_beliefs:
+        if not self.beliefs:
             return "BeliefBase: (empty)"
-        lines = ["BeliefBase:"]
-        for f, p in sorted_beliefs:
-            lines.append(f"  priority={p}: {f}")
+        lines = ["BeliefBase (most entrenched first):"]
+        for i, f in enumerate(self.beliefs):
+            lines.append(f"  {i+1}. {f}")
         return "\n".join(lines)
