@@ -14,9 +14,12 @@ from formula import Atom, Not
 from cnf import to_cnf
 
 def negate_literal(lit):
+    """
+    Return the complement of a literal.
+    """
     if isinstance(lit, Not):
-        return lit.operand
-    return Not(lit)
+        return lit.operand  # NOT p  ->  p
+    return Not(lit)         # p      ->  NOT p
 
 def resolve(clause1, clause2):
     """Try to resolve two clauses. Returns set of new clauses produced."""

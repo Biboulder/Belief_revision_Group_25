@@ -1,7 +1,5 @@
 """
-
 Tests for formula.py — the propositional formula building blocks.
-
 """
 
 import sys

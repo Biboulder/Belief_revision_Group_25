@@ -1,3 +1,15 @@
+#
+#   <->   biconditional    — left-associative
+#   ->    implication      — right-associative
+#   |     disjunction      — left-associative
+#   &     conjunction      — left-associative
+#   ~     negation, unary  — right-associative (handles ~~p naturally)
+#
+#   The chain:
+#   parse -> parse_biconditional -> parse_implication -> parse_or
+#         -> parse_and -> parse_not -> parse_atom
+#
+
 from formula import Atom, Not, And, Or, Implies, Biconditional
 
 class Parser:

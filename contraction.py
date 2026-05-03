@@ -1,6 +1,6 @@
-# Partial meet contraction
-# B ÷ φ
-
+# Partial meet contraction: B ÷ φ
+#
+# Goal: remove φ from the belief base while keeping as much as possible.
 
 from itertools import combinations
 from belief_base import BeliefBase
@@ -51,10 +51,13 @@ def contract(belief_base, formula):
         return belief_base
 
     remainders = get_remainders(belief_base, formula)
+    
+    # Edge case: no remainders at all means even the empty set entails φ
+    # (φ is a tautology). Return an empty belief base.
     if not remainders:
-        new_bb = BeliefBase()
-        return new_bb
+        return BeliefBase()
 
+    # pick the highest-priority remainders
     selected = selection_function(remainders, belief_base)
 
     # Intersection: keep only beliefs in ALL selected remainders
@@ -65,7 +68,7 @@ def contract(belief_base, formula):
     for r in selected[1:]:
         intersection &= set(r)
 
-# Preserve original insertion order for entrenched beliefs
+    # Preserve original insertion order for entrenched beliefs
     new_bb = BeliefBase()
     for f in belief_base.get_formulas():
         if f in intersection:
