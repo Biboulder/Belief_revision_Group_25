@@ -8,26 +8,20 @@ from resolution import is_entailed
 
 def get_remainders(belief_base, formula):
     """Find all maximal subsets of belief_base that do NOT entail formula."""
-    beliefs = belief_base.get_sorted()  # list of (formula, priority)
+    beliefs = belief_base.get_sorted()
     formulas = [f for f, p in beliefs]
-    remainders = []
+    candidates = []
 
-    # Try all subsets from largest to smallest
     for size in range(len(formulas), -1, -1):
         for subset in combinations(range(len(formulas)), size):
             subset_formulas = [formulas[i] for i in subset]
             if not is_entailed(subset_formulas, formula):
-                # Check it's maximal: no formula outside it can be added
-                is_maximal = True
-                outside = [f for i, f in enumerate(formulas) if i not in subset]
-                for extra in outside:
-                    if not is_entailed(subset_formulas + [extra], formula):
-                        is_maximal = False
-                        break
-                if is_maximal:
-                    remainders.append(subset_formulas)
-        if remainders:
-            break  # found maximal subsets at this size, stop
+                candidates.append(frozenset(subset))
+
+    remainders = []
+    for c in candidates:
+        if not any(c < other for other in candidates):
+            remainders.append([formulas[i] for i in sorted(c)])
 
     return remainders
 
@@ -65,7 +59,7 @@ def contract(belief_base, formula):
     for r in selected[1:]:
         intersection &= set(r)
 
-# Preserve original insertion order for entrenched beliefs
+    # Preserve original insertion order for entrenched beliefs
     new_bb = BeliefBase()
     for f in belief_base.get_formulas():
         if f in intersection:
